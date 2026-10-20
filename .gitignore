@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.hypothesis/
+
+# PyInstaller build artifacts
+build/
+dist/
+*.spec.bak
+
+# Compiled icon generated from dumper.png at build time
+dumper.ico
+
+# Scratch diagnostic output captured during live-device sessions
+scan_out.txt
+scan_classic.json
+scan_classic.txt
+inspect_out.txt
+frozen_fixture.json
+probe3_deep.json
+probe3_2g.json
+hex_*.json
+mbr3.json
+
+# Raw dumps and live session output must never be committed
+*.bin
+*.part
+read.log
+read_events.jsonl
+metadata.json
+checkpoint.json
+summary.txt
+fixture-output/
+iPodDumperOutput/
+
+# Exception: the small synthetic fixture_success deliverable evidence is kept
+!samples/
+!samples/**

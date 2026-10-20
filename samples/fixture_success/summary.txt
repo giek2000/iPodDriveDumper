@@ -1,0 +1,6 @@
+Status: COMPLETE
+Reason: complete read
+Written bytes: 192512
+Last successful offset: 0x2F000
+Output directory: iPodRawDriveDumper\samples\fixture_success
+Next action: preserve the raw artifact and review metadata.json before analysis.

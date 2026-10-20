@@ -1,0 +1,280 @@
+{
+  "chunk_size": 4096,
+  "chunks": [
+    {
+      "length": 4096,
+      "offset": 0,
+      "sha256": "c1aa221c4b0633aa444aaa84ccaed75b6b5c31272d83158256fe96cc44e02f2f"
+    },
+    {
+      "length": 4096,
+      "offset": 4096,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 8192,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 12288,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 16384,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 20480,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 24576,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 28672,
+      "sha256": "a49eb321fb2738cb214c48e7979a59568120ba4d4143fe978289ec631f7f76aa"
+    },
+    {
+      "length": 4096,
+      "offset": 32768,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 36864,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 40960,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 45056,
+      "sha256": "ba236266659a0f65b2465837119c97271ef0d448bb195ac39b06300176b1ed15"
+    },
+    {
+      "length": 4096,
+      "offset": 49152,
+      "sha256": "32c5147da5b2c8278d852d5687a8519888471a8af57520ef337a96cb1c368a4b"
+    },
+    {
+      "length": 4096,
+      "offset": 53248,
+      "sha256": "54572c29c28fd893db5ac034710498b5b9948bbafc034c7d8f753dde6ad31bd8"
+    },
+    {
+      "length": 4096,
+      "offset": 57344,
+      "sha256": "4f8cf6bc6e3978e645cc2ddc881cfa607b70974e55c6bba868ad9d4bc02fc556"
+    },
+    {
+      "length": 4096,
+      "offset": 61440,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 65536,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 69632,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 73728,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 77824,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 81920,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 86016,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 90112,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 94208,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 98304,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 102400,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 106496,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 110592,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 114688,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 118784,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 122880,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 126976,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 131072,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 135168,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 139264,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 143360,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 147456,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 151552,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 155648,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 159744,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 163840,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 167936,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 172032,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 176128,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 180224,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 184320,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    },
+    {
+      "length": 4096,
+      "offset": 188416,
+      "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7"
+    }
+  ],
+  "device": {
+    "alignment": 512,
+    "cylinders": null,
+    "disk_length": 192512,
+    "geometry_ioctl": "IOCTL_DISK_GET_DRIVE_GEOMETRY (0x00070000)",
+    "index": null,
+    "length_ioctl": "IOCTL_DISK_GET_LENGTH_INFO (0x0007405C)",
+    "logical_sector_size": 512,
+    "model": null,
+    "path": "fixture://ipod",
+    "physical_sector_size": 512,
+    "removable": true,
+    "sectors_per_track": null,
+    "serial_redacted": null,
+    "tracks_per_cylinder": null,
+    "volumes": []
+  },
+  "io_mode": "buffered",
+  "last_contiguous": 192512,
+  "layout_fingerprint": {
+    "directory_offset": 47616,
+    "directory_sha256": "c61477b98b920a5789a75a596edb713d8e247f0f0d7b425fd3c726fd0b2d30b7",
+    "header_sha256": "eea5b6ec2d742469c6df8bf8e4787ec143461e70700c1832ed3bbc1a85fdc2cb",
+    "marker": "7b7b7e7e",
+    "marker_offset": 32256,
+    "sections": [
+      {
+        "length": 12288,
+        "name": "soso",
+        "start": 49152
+      }
+    ],
+    "version": 1024
+  },
+  "output_part": "ipod_raw_dumper\\samples\\fixture_success\\firmware_raw.bin.part",
+  "requested_end": 192512,
+  "requested_start": 0,
+  "schema_version": 1,
+  "session_id": "25de1c6ca269488093d7eea3bc630fb5",
+  "updated_utc": "2026-09-16T15:36:02.898Z"
+}

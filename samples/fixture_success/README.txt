@@ -1,0 +1,1 @@
+Successful synthetic 512-byte fixture evidence. The full firmware_raw.bin and its hash sidecar were intentionally omitted from source control; metadata.json, read.log, read_events.jsonl, summary.txt, header/directory copies, and the byte-preserving OSOS extraction are retained.
