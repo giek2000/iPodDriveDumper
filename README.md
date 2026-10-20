@@ -71,7 +71,7 @@ Put the iPod in disk mode, keep it connected during scanning/dumping, and verify
 This is also a standalone PySide6 GUI: use the **iPod** selector to choose a validated physical disk candidate and **Files output** to choose a host-side destination. The GUI includes Refresh, layout inspection, section extraction, explicit read-only confirmation, progress/cancel, and output/log actions.
 
 
-From `C:\KIRO`:
+To try it without any hardware, run the built-in fixtures from the directory that contains the `iPodRawDriveDumper` package folder (the repository root):
 
 ```powershell
 python -m iPodRawDriveDumper inspect --fixture 2048 --json
@@ -79,7 +79,7 @@ python -m iPodRawDriveDumper dump --fixture 512 --output .\iPodRawDriveDumper\fi
 python -m iPodRawDriveDumper diagnostics --session .\iPodRawDriveDumper\fixture-output
 ```
 
-The fixtures exercise both 512-byte and observed 2048-byte layouts without requiring Windows or a physical disk.
+The fixtures exercise both 512-byte and observed 2048-byte layouts without requiring a physical disk.
 
 ## Live use
 
