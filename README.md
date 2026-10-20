@@ -17,6 +17,20 @@ Other iPod families (Nano, Mini, Shuffle) are not supported.
 
 Read-only diagnostic commands (`probe`, `hexdump`) are provided to inspect a device's real on-disk bytes before any dump.
 
+### Full-partition dump and sub-image extraction
+
+For a complete firmware-partition image (useful for preserving beta firmware and for later IPSW recreation), use full-partition mode:
+
+```powershell
+IpodRawDriveDumper.exe dump --drive \\.\PhysicalDrive2 --output C:\Backups\miniFW --full-partition --extract-sections
+```
+
+- `--full-partition` dumps the entire MBR-declared firmware partition, not just up to the last `!ATA` section, so trailing/reserved space is preserved.
+- `--extract-sections` writes every validated `!ATA` sub-image by name (`soso`/OSOS, `aupd`/`dpua` updater, `rsrc`, `hibe`, and any others present), each with its directory record, offsets, load/entry addresses, and stored checksum recorded in `metadata.json`.
+- The raw image, the preserved MBR, the `]ih[` directory, per-section SHA-256 hashes, and geometry together form the inputs a separate packaging tool would need to rebuild an IPSW. This tool stays read-only and does not itself package or flash.
+
+In the GUI, tick both "Full partition" and "Extract sections" before starting the dump. A device with two firmware images (primary + mirror) lists them separately by offset so each can be dumped.
+
 
 Put the iPod in disk mode, keep it connected during scanning/dumping, and verify the selected physical disk. Administrator privileges are normally required. The final confirmation states that no write access is requested and no disk sectors are modified. Do not use this tool as a restore image generator.
 

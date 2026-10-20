@@ -1,4 +1,4 @@
 """Central application identity and version."""
 
 APP_NAME = "IpodRawDriveDumper"
-VERSION = "0.1.20"
+VERSION = "0.1.21"

@@ -150,3 +150,28 @@ def test_progress_callback_reports_completed_chunks(tmp_path: Path):
         extract_sections=False, progress=lambda completed, total: progress.append((completed, total)))
     assert result["session"]["status"] == "COMPLETE"
     assert progress and progress[-1] == (layout.requested_end, layout.requested_end)
+
+
+def test_full_partition_dump_covers_partition_end(tmp_path: Path):
+    fixture, layout = prepared()
+    # The fixture's MBR firmware partition spans the whole disk, which is larger than the
+    # last !ATA section, so full-partition mode must extend the dump to the partition end.
+    assert layout.firmware_partition_end is not None
+    assert layout.firmware_partition_end > layout.section_end
+    result = DumpEngine(chunk_size=65536, sleep=lambda _: None).run(
+        SyntheticReader(fixture), layout, tmp_path / "full", extract_sections=True, full_partition=True)
+    assert result["session"]["status"] == "COMPLETE"
+    assert result["dump"]["full_partition"] is True
+    assert result["dump"]["requested_end"] == layout.firmware_partition_end
+    assert result["dump"]["written_bytes"] == layout.firmware_partition_end
+    # All validated sub-images are still extracted by name.
+    assert any(a["name"].startswith("soso_") for a in result["artifacts"])
+
+
+def test_default_dump_uses_requested_end_not_full_partition(tmp_path: Path):
+    fixture, layout = prepared()
+    result = DumpEngine(chunk_size=65536, sleep=lambda _: None).run(
+        SyntheticReader(fixture), layout, tmp_path / "default", extract_sections=False)
+    assert result["session"]["status"] == "COMPLETE"
+    assert result["dump"]["full_partition"] is False
+    assert result["dump"]["requested_end"] == layout.requested_end

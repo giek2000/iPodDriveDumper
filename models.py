@@ -126,6 +126,17 @@ class FirmwareLayout:
         return self.valid and not self.boundary_ambiguous and not any(p.contradiction for p in self.partitions)
 
     @property
+    def firmware_partition_end(self) -> Optional[int]:
+        """MBR-declared firmware-partition end (bytes), if a type-0x00 partition is present."""
+        ends = [p.raw_end for p in self.partitions if p.selected and p.raw_end]
+        return max(ends) if ends else None
+
+    @property
+    def section_end(self) -> int:
+        """End offset of the last validated !ATA section."""
+        return max((s.absolute_end for s in self.sections), default=0)
+
+    @property
     def family(self) -> str:
         """Best-effort device family from observed, verifiable structure traits.
 

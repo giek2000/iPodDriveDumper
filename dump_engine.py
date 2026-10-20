@@ -35,6 +35,7 @@ class DumpEngine:
             end: Optional[int] = None, extract_sections: bool = True,
             cancel: Optional[Any] = None, command: str = "dump",
             session_id: Optional[str] = None, diagnostic: bool = False,
+            full_partition: bool = False,
             progress: Optional[Callable[[int, int], None]] = None) -> dict[str, Any]:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -52,11 +53,26 @@ class DumpEngine:
             reader.close()
             return self._finish(output_dir, logger, manifest, DumpStatus.INVALID_STRUCTURE,
                                 "unresolved geometry or partition-boundary contradiction; use an explicitly labeled diagnostic range")
-        end = layout.requested_end if end is None else end
+        if end is None:
+            if full_partition:
+                partition_end = layout.firmware_partition_end
+                if not partition_end:
+                    reader.close()
+                    return self._finish(output_dir, logger, manifest, DumpStatus.INVALID_STRUCTURE,
+                                        "full-partition mode requires an MBR-declared firmware partition end")
+                end = max(partition_end, layout.section_end)
+            else:
+                end = layout.requested_end
         if start < 0 or end <= start or end > reader.geometry.disk_length:
             return self._finish(output_dir, logger, manifest, DumpStatus.INVALID_STRUCTURE, "requested range is invalid")
         manifest["dump"].update({"requested_start": start, "requested_end": end, "requested_bytes": end - start,
-                                   "diagnostic_override": diagnostic})
+                                   "diagnostic_override": diagnostic, "full_partition": full_partition,
+                                   "firmware_partition_end": layout.firmware_partition_end,
+                                   "section_end": layout.section_end})
+        logger.info("dump", "range_resolved", offset=start, requested=end - start,
+                    details={"full_partition": full_partition, "end": end,
+                             "firmware_partition_end": layout.firmware_partition_end,
+                             "section_end": layout.section_end})
         part_path = output_dir / "firmware_raw.bin.part"
         manifest["dump"]["part_path"] = str(part_path)
         checkpoint = self._load_checkpoint(output_dir)

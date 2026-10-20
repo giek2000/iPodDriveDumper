@@ -74,12 +74,14 @@ class DumpWorker(QThread):
     failed = Signal(str)
 
     def __init__(self, path: str, layout: FirmwareLayout, output: Path,
-                 extract_sections: bool, parent: QWidget | None = None):
+                 extract_sections: bool, full_partition: bool = False,
+                 parent: QWidget | None = None):
         super().__init__(parent)
         self.path = path
         self.layout = layout
         self.output = output
         self.extract_sections = extract_sections
+        self.full_partition = full_partition
         self.cancel_event = threading.Event()
 
     def cancel(self) -> None:
@@ -102,6 +104,7 @@ class DumpWorker(QThread):
                 extract_sections=self.extract_sections,
                 cancel=self.cancel_event,
                 command="gui_dump",
+                full_partition=self.full_partition,
                 progress=on_progress,
             )
             self.completed.emit(result)
@@ -164,9 +167,19 @@ class DumperWindow(QMainWindow):
         self.browse_button = QPushButton("Browse…")
         self.browse_button.clicked.connect(self._browse_output)
         setup.addWidget(self.browse_button, 1, 2)
+        options = QHBoxLayout()
+        options.setContentsMargins(0, 0, 0, 0)
         self.extract_checkbox = QCheckBox("Extract sections")
         self.extract_checkbox.setChecked(True)
-        setup.addWidget(self.extract_checkbox, 1, 3)
+        options.addWidget(self.extract_checkbox)
+        self.full_partition_checkbox = QCheckBox("Full partition")
+        self.full_partition_checkbox.setToolTip(
+            "Dump the entire MBR-declared firmware partition, not just to the last !ATA section.")
+        options.addWidget(self.full_partition_checkbox)
+        options.addStretch()
+        options_container = QWidget()
+        options_container.setLayout(options)
+        setup.addWidget(options_container, 1, 3)
         setup.setColumnStretch(1, 1)
         root.addWidget(setup_box)
 
@@ -453,10 +466,17 @@ class DumperWindow(QMainWindow):
             QMessageBox.warning(self, "Unsafe layout", "This layout is not eligible for a complete dump.")
             return
         output = Path(output_text)
+        full_partition = self.full_partition_checkbox.isChecked()
+        if full_partition and layout.firmware_partition_end:
+            end_label = _hex(max(layout.firmware_partition_end, layout.section_end))
+            range_label = f"0x00000000–{end_label} (full firmware partition)"
+        else:
+            range_label = f"0x00000000–{_hex(layout.requested_end)}"
         confirmation = (
             f"Device: {record.path}\n"
+            f"Family: {layout.family}\n"
             f"Sector size: {record.geometry.logical_sector_size if record.geometry else 'unknown'} bytes\n"
-            f"Read range: 0x00000000–{_hex(layout.requested_end)}\n"
+            f"Read range: {range_label}\n"
             f"Output: {output}\n\n"
             "This operation opens the selected physical disk read-only and copies bytes from it. "
             "No write access will be requested and no disk sectors will be modified.\n\n"
@@ -470,7 +490,8 @@ class DumperWindow(QMainWindow):
         self.progress.setValue(0)
         self._set_busy(True, dumping=True)
         self.status_label.setText("Starting read-only dump…")
-        self.dump_worker = DumpWorker(record.path, layout, output, self.extract_checkbox.isChecked(), self)
+        self.dump_worker = DumpWorker(record.path, layout, output, self.extract_checkbox.isChecked(),
+                                      full_partition, self)
         self.dump_worker.progress.connect(self._dump_progress)
         self.dump_worker.status.connect(self.status_label.setText)
         self.dump_worker.completed.connect(self._dump_completed)

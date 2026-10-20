@@ -101,7 +101,8 @@ def _dump(args):
         if input(prompt + " Confirm? [y/N] ").strip().lower() != "y":
             return 1
     manifest = engine.run(reader, layout, output, start=args.start, end=args.end,
-                          extract_sections=args.extract_sections, command="dump", diagnostic=diagnostic)
+                          extract_sections=args.extract_sections, command="dump", diagnostic=diagnostic,
+                          full_partition=args.full_partition)
     print(json.dumps(manifest, indent=2, sort_keys=True) if args.json else manifest["session"]["status"])
     return EXIT_CODES[manifest["session"]["status"]]
 
@@ -244,6 +245,8 @@ def build_parser() -> argparse.ArgumentParser:
     dump.add_argument("--chunk-size", type=int, default=1024 * 1024)
     dump.add_argument("--retries", type=int, default=4)
     dump.add_argument("--extract-sections", action="store_true", default=False)
+    dump.add_argument("--full-partition", action="store_true", default=False,
+                      help="dump the entire MBR-declared firmware partition (not just to the last !ATA section)")
     dump.add_argument("--json", action="store_true")
     mode = dump.add_mutually_exclusive_group()
     mode.add_argument("--buffered", action="store_true", default=True)
