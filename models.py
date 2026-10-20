@@ -142,17 +142,22 @@ class FirmwareLayout:
 
         Grounded in live devices rather than a single header field:
         - S5L8702 IMG1 -> iPod Classic.
-        - PortalPlayer OSOS carrying the literal "portalplayer" and an OSOS first
-          word of 0xEA000079 matches the observed iPod Mini.
         - PortalPlayer OSOS first word 0xEA00007A matches the observed iPod Video 5G/5.5G.
+        - PortalPlayer OSOS carrying the literal "portalplayer" with an OSOS first
+          word of 0xEA000079 is the PP5020 generation. A live iPod Mini 2G and a
+          live iPod 4G/Photo (Color) are byte-for-byte indistinguishable here: both
+          carry the same "portalplayer" string, the same 0xEA000079 OSOS branch, and
+          the same shared "PP5020AF-05.00-..." boot build string. Disk-mode firmware
+          exposes nothing that reliably tells these PP5020 models apart, so report the
+          honest shared family rather than falsely singling out one model.
         Otherwise report the honest shared family without guessing a model.
         """
         if self.marker == b"8702":
             return "iPod Classic (S5L8702)"
-        if b"portalplayer" in self.osos_signature and self.osos_first_word == 0xEA000079:
-            return "iPod Mini (PortalPlayer)"
         if self.osos_first_word == 0xEA00007A:
             return "iPod Video 5G/5.5G (PortalPlayer PP5022)"
+        if b"portalplayer" in self.osos_signature and self.osos_first_word == 0xEA000079:
+            return "iPod Mini / 4G / Photo (PortalPlayer PP5020)"
         return "iPod (PortalPlayer)"
 
     def fingerprint(self) -> dict[str, Any]:

@@ -9,9 +9,12 @@ A read-only tool that makes a safe backup copy of an iPod's firmware. It **never
 | iPod model | Firmware dump over USB disk mode? | Notes |
 |---|---|---|
 | **iPod Video 5G / 5.5G** | ✅ Yes — tested on real hardware | Full firmware dump + named sub-image extraction |
-| **iPod Mini 2G** | ✅ Yes — tested on real hardware | Full firmware dump + named sub-image extraction |
+| **iPod Mini 2G** | ✅ Yes — tested on real hardware | PP5020 generation; full firmware dump + named sub-image extraction |
+| **iPod 4G / Photo (Color)** | ✅ Yes — tested on real hardware | Same PP5020 firmware layout as the Mini; full firmware dump + named sub-image extraction |
 | **iPod Classic 6G/6.5G/7G** | ❌ No | Detected and identified, but the Classic only exposes its data partition over disk mode — firmware is not readable this way (needs DFU/wInd3x) |
 | iPod Nano / Shuffle | ❌ Not supported | — |
+
+Note on model names: over USB disk mode the iPod Mini, 4G, and Photo/Color are the same PortalPlayer PP5020 generation and expose byte-for-byte identical firmware fingerprints. The tool therefore labels them with the shared family name "iPod Mini / 4G / Photo (PortalPlayer PP5020)" rather than guessing which one it is — the dump itself is complete and correct regardless of the exact model.
 
 What a successful dump gives you:
 
@@ -41,7 +44,7 @@ If anything looks wrong, nothing has been changed on the iPod — the tool only 
 Supported for raw disk-mode firmware dumping:
 
 - **iPod Video 5G/5.5G** (PortalPlayer PP5022/PP5022C) — `{{~~` / `]ih[` / `!ATA` firmware layout. This model exposes its firmware partition as readable sectors over USB disk mode.
-- **iPod Mini** (PortalPlayer PP5020/PP5022) — same `{{~~` / `]ih[` / `!ATA` PortalPlayer layout, confirmed on a live iPod Mini 2G. The Mini's `]ih[` header version field is zero and its OSOS begins with a different ARM branch (`0xEA000079`) than the Video; the validator accepts any ARM-branch OSOS first word and treats a zero header version as informational, so the Mini validates and dumps.
+- **iPod Mini / 4G / Photo (Color)** (PortalPlayer PP5020) — same `{{~~` / `]ih[` / `!ATA` PortalPlayer layout, confirmed on a live iPod Mini 2G and a live iPod 4G Color. Their OSOS begins with the ARM branch `0xEA000079` (not the Video's `0xEA00007A`); the validator accepts any ARM-branch OSOS first word, so they validate and dump. These PP5020 models are not reliably distinguishable from one another over disk mode — all three carry the same `portalplayer` string and the same `PP5020AF-05.00-...` boot build string — so the tool reports the shared family name rather than claiming a specific model.
 
 Recognized but not raw-dumpable over disk mode:
 

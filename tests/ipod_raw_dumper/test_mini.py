@@ -20,8 +20,27 @@ def test_mini_portalplayer_layout_is_validated():
     assert layout.osos_first_word == 0xEA000079
     assert (layout.osos_first_word >> 24) == 0xEA
     assert b"portalplayer" in layout.osos_signature
-    assert layout.family == "iPod Mini (PortalPlayer)"
+    # A live Mini 2G and a live 4G/Photo (Color) are indistinguishable over disk mode
+    # (same "portalplayer" string, same 0xEA000079 OSOS branch, same PP5020 build
+    # string), so the honest label is the shared PP5020 family, not a single model.
+    assert layout.family == "iPod Mini / 4G / Photo (PortalPlayer PP5020)"
     assert layout.complete_safe
+
+
+def test_pp5020_family_label_is_shared_and_honest():
+    """The PP5020 fingerprint observed on a live 4G Color is identical to the Mini's.
+
+    Grounded in a live iPod 4G Color (PhysicalDrive2): directory soso+dpua,
+    OSOS first word 0xEA000079, "portalplayer" present, build "PP5020AF-05.00-...".
+    The scanner validated it as dumpable; the only honest family label is the
+    shared PP5020 family rather than a false "iPod Mini" claim.
+    """
+    fixture = build_mini_fixture()
+    candidate = find_candidate(SyntheticReader(fixture), fixture.geometry, fixture.marker_offset)
+    assert candidate.accepted, candidate.reasons
+    assert candidate.layout.osos_first_word == 0xEA000079
+    assert "PP5020" in candidate.layout.family
+    assert "4G" in candidate.layout.family
 
 
 def test_mini_scan_reports_single_validated_candidate():
