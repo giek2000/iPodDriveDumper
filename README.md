@@ -2,6 +2,8 @@
 
 A read-only tool that makes a safe backup copy of an iPod's firmware. It **never writes to, restores, or flashes your iPod** — it only reads. There is no write path in the program at all; disk access is opened read-only and the only low-level queries are for disk size and geometry.
 
+![IpodRawDriveDumper interface](docs/interface.png)
+
 > ⚠️ **Work in progress.** This tool is under active development. It already works well for the models listed below, but features and model support are still being added, and version numbers change often. Please read the support list before relying on it, and always keep your original iPod and a known-good IPSW as backups.
 
 ## What works right now
