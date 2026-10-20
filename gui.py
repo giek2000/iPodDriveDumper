@@ -183,6 +183,22 @@ class DumperWindow(QMainWindow):
         setup.setColumnStretch(1, 1)
         root.addWidget(setup_box)
 
+        self.welcome_label = QLabel(
+            "<b>Work in progress.</b> This is a read-only tool: it never writes to, restores, or flashes your iPod. "
+            "<b>Working today:</b> full firmware dumps of iPod Video 5G/5.5G and iPod Mini 2G in disk mode, "
+            "with named sub-image extraction. iPod Classic is detected but its firmware cannot be dumped over "
+            "disk mode (it shows only its data partition). Nano and Shuffle are not supported. "
+            "<b>Steps:</b> 1) Put the iPod in disk mode and connect it. 2) Click Refresh and pick it from the iPod list. "
+            "3) Choose a Files output folder on your PC (never the iPod). 4) Click Start Read-Only Dump."
+        )
+        self.welcome_label.setWordWrap(True)
+        self.welcome_label.setTextFormat(Qt.RichText)
+        self.welcome_label.setStyleSheet(
+            "color: #333; font-size: 11px; background: #fff8e1; border: 1px solid #ffe082;"
+            " border-radius: 4px; padding: 6px 8px;"
+        )
+        root.addWidget(self.welcome_label)
+
         self.safety_label = QLabel()
         self.safety_label.setWordWrap(True)
         self.safety_label.setStyleSheet("color: #555; font-size: 11px; padding: 1px 3px;")
