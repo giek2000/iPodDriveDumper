@@ -21,6 +21,8 @@ inspect_out.txt
 frozen_fixture.json
 probe3_deep.json
 probe3_2g.json
+probe_mini*.json
+scan_mini.txt
 hex_*.json
 mbr3.json
 
