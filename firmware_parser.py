@@ -121,8 +121,11 @@ def parse_candidate(reader: Any, geometry: RawGeometry, marker_offset: int, mark
             reasons.append("missing, zero-length, or out-of-bounds soso record")
         osos_first_word = None
         retail_os_found = None
+        osos_signature = b""
         if osos and osos.bounds_status == "IN_BOUNDS" and osos.declared_length >= 4:
-            first = reader.read_at(osos.absolute_start, 4)
+            sig_len = min(0x40, osos.declared_length)
+            osos_signature = reader.read_at(osos.absolute_start, sig_len)
+            first = osos_signature[:4]
             osos_first_word = int.from_bytes(first, "little")
             # PortalPlayer OSOS begins with an ARM `B` (branch) instruction (top byte 0xEA).
             # iPod Video uses 0xEA00007A; iPod Mini uses a different branch offset (e.g. 0xEA000079).
@@ -163,6 +166,7 @@ def parse_candidate(reader: Any, geometry: RawGeometry, marker_offset: int, mark
             retail_os_found=retail_os_found, mbr_raw=mbr, partitions=partitions,
             requested_end=requested_end, boundary_ambiguous=boundary_ambiguous,
             validation_score=score, validation_checks=checks, rejection_reasons=reasons,
+            osos_signature=osos_signature,
         )
         return ProbeCandidate(marker_offset, marker.decode("ascii", "replace"), layout.valid, score, reasons, layout)
     except (struct.error, ValueError, RawReadError, OSError) as exc:

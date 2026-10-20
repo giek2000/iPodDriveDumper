@@ -114,6 +114,7 @@ class FirmwareLayout:
     validation_checks: dict[str, bool] = field(default_factory=dict)
     rejection_reasons: list[str] = field(default_factory=list)
     probe_candidates: list[dict[str, Any]] = field(default_factory=list)
+    osos_signature: bytes = b""
 
     @property
     def valid(self) -> bool:
@@ -126,14 +127,22 @@ class FirmwareLayout:
 
     @property
     def family(self) -> str:
-        """Best-effort device family from observed structure traits."""
+        """Best-effort device family from observed, verifiable structure traits.
+
+        Grounded in live devices rather than a single header field:
+        - S5L8702 IMG1 -> iPod Classic.
+        - PortalPlayer OSOS carrying the literal "portalplayer" and an OSOS first
+          word of 0xEA000079 matches the observed iPod Mini.
+        - PortalPlayer OSOS first word 0xEA00007A matches the observed iPod Video 5G/5.5G.
+        Otherwise report the honest shared family without guessing a model.
+        """
         if self.marker == b"8702":
             return "iPod Classic (S5L8702)"
-        # PortalPlayer family: iPod Video 5G/5.5G carries a non-zero ]ih[ version;
-        # iPod Mini's ]ih[ header is zero past +0x0C.
-        if 0 < self.version < 0x10000:
+        if b"portalplayer" in self.osos_signature and self.osos_first_word == 0xEA000079:
+            return "iPod Mini (PortalPlayer)"
+        if self.osos_first_word == 0xEA00007A:
             return "iPod Video 5G/5.5G (PortalPlayer PP5022)"
-        return "iPod Mini (PortalPlayer PP5020/PP5022)"
+        return "iPod (PortalPlayer)"
 
     def fingerprint(self) -> dict[str, Any]:
         import hashlib

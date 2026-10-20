@@ -19,7 +19,8 @@ def test_mini_portalplayer_layout_is_validated():
     # ARM branch accepted even though it is not the Video's 0xEA00007A.
     assert layout.osos_first_word == 0xEA000079
     assert (layout.osos_first_word >> 24) == 0xEA
-    assert layout.family == "iPod Mini (PortalPlayer PP5020/PP5022)"
+    assert b"portalplayer" in layout.osos_signature
+    assert layout.family == "iPod Mini (PortalPlayer)"
     assert layout.complete_safe
 
 

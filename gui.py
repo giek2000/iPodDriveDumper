@@ -316,15 +316,24 @@ class DumperWindow(QMainWindow):
         self.ipod_combo.blockSignals(True)
         self.ipod_combo.clear()
         self.candidate_table.setRowCount(0)
+        # Count accepted candidates per physical drive so multiple firmware images on one
+        # device are labelled as primary / mirror instead of appearing as duplicate drives.
+        per_drive_seen: dict[str, int] = {}
         for record, candidate in self.matches:
             layout = candidate.layout
             if layout is None or record.geometry is None:
                 continue
-            display = f"{record.path} — {record.geometry.logical_sector_size} B — {_format_size(record.geometry.disk_length)}"
+            seen = per_drive_seen.get(record.path, 0)
+            per_drive_seen[record.path] = seen + 1
+            role = "primary firmware" if seen == 0 else f"mirror/backup #{seen}"
+            image = f"{role} @ 0x{layout.marker_offset:X}"
+            display = (f"{record.path} — {layout.family} — {role} @ 0x{layout.marker_offset:X} "
+                       f"— {_format_size(record.geometry.disk_length)}")
             self.ipod_combo.addItem(display, (record, candidate))
             row = self.candidate_table.rowCount()
             self.candidate_table.insertRow(row)
-            values = (record.path, f"{record.geometry.logical_sector_size} B", _format_size(record.geometry.disk_length), "Validated")
+            values = (f"{record.path}  ({image})", f"{record.geometry.logical_sector_size} B",
+                      _format_size(record.geometry.disk_length), "Validated")
             for column, value in enumerate(values):
                 item = QTableWidgetItem(value)
                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
