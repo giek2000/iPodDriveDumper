@@ -198,7 +198,7 @@ def _resume(args):
     output = manifest_path.parent
     result = engine.run(reader, matches[0][1].layout, output,
                         start=int(dump["requested_start"]), end=int(dump["requested_end"]),
-                        extract_sections=True, command="resume")
+                        extract_sections=True, command="resume", resume=True)
     print(json.dumps(result, indent=2, sort_keys=True) if args.json else result["session"]["status"])
     return EXIT_CODES[result["session"]["status"]]
 

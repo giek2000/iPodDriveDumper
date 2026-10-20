@@ -175,3 +175,60 @@ def test_default_dump_uses_requested_end_not_full_partition(tmp_path: Path):
     assert result["session"]["status"] == "COMPLETE"
     assert result["dump"]["full_partition"] is False
     assert result["dump"]["requested_end"] == layout.requested_end
+
+
+def test_fresh_dump_ignores_stale_checkpoint(tmp_path: Path):
+    fixture, layout = prepared()
+    out = tmp_path / "reused"
+    # First dump leaves a checkpoint for this range.
+    first = DumpEngine(chunk_size=4096, sleep=lambda _: None).run(
+        SyntheticReader(fixture), layout, out, extract_sections=False)
+    assert first["session"]["status"] == "COMPLETE"
+    # Remove the finalized artifact but keep the stale checkpoint, then run a DIFFERENT range.
+    (out / "firmware_raw.bin").unlink()
+    assert (out / "checkpoint.json").exists()
+    result = DumpEngine(chunk_size=4096, sleep=lambda _: None).run(
+        SyntheticReader(fixture), layout, out, extract_sections=False, full_partition=True)
+    assert result["session"]["status"] == "COMPLETE"
+    assert result["dump"]["full_partition"] is True
+
+
+def test_fresh_dump_refuses_to_clobber_finalized_artifact(tmp_path: Path):
+    fixture, layout = prepared()
+    out = tmp_path / "finalized"
+    first = DumpEngine(chunk_size=4096, sleep=lambda _: None).run(
+        SyntheticReader(fixture), layout, out, extract_sections=False)
+    assert first["session"]["status"] == "COMPLETE"
+    assert (out / "firmware_raw.bin").exists()
+    # A different range into the same folder must not overwrite the completed image.
+    result = DumpEngine(chunk_size=4096, sleep=lambda _: None).run(
+        SyntheticReader(fixture), layout, out, extract_sections=False, full_partition=True)
+    assert result["session"]["status"] == "INVALID_STRUCTURE"
+    assert (out / "firmware_raw.bin").exists()
+
+
+def test_explicit_resume_refuses_mismatched_layout_but_fresh_dump_recovers(tmp_path: Path):
+    import json as _json
+    fixture, layout = prepared()
+    out = tmp_path / "resume_strict"
+    # Produce a genuine partial with real written bytes and a checkpoint.
+    reader = SyntheticReader(fixture)
+    fail_at = layout.requested_end - 4096
+    reader.faults[fail_at] = [RawReadError("disconnect", offset=fail_at, requested=4096, transient=False)]
+    partial = DumpEngine(chunk_size=4096, retries=0, sleep=lambda _: None).run(
+        reader, layout, out, extract_sections=False)
+    assert partial["session"]["status"] == "PARTIAL"
+    checkpoint = _json.loads((out / "checkpoint.json").read_text())
+    assert checkpoint["last_contiguous"] > 0
+    # Corrupt the checkpoint's recorded range so it no longer matches the request.
+    checkpoint["requested_end"] = checkpoint["requested_end"] + 4096
+    (out / "checkpoint.json").write_text(_json.dumps(checkpoint), encoding="utf-8")
+    # Explicit resume must refuse and preserve the partial evidence.
+    strict = DumpEngine(chunk_size=4096, sleep=lambda _: None).run(
+        SyntheticReader(fixture), layout, out, extract_sections=False, command="resume", resume=True)
+    assert strict["session"]["status"] == "INVALID_STRUCTURE"
+    assert (out / "firmware_raw.bin.part").exists()
+    # A fresh dump into the same folder (no finalized artifact) recovers by starting clean.
+    fresh = DumpEngine(chunk_size=4096, sleep=lambda _: None).run(
+        SyntheticReader(fixture), layout, out, extract_sections=False)
+    assert fresh["session"]["status"] == "COMPLETE"

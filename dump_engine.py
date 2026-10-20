@@ -35,7 +35,7 @@ class DumpEngine:
             end: Optional[int] = None, extract_sections: bool = True,
             cancel: Optional[Any] = None, command: str = "dump",
             session_id: Optional[str] = None, diagnostic: bool = False,
-            full_partition: bool = False,
+            full_partition: bool = False, resume: bool = False,
             progress: Optional[Callable[[int, int], None]] = None) -> dict[str, Any]:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -83,10 +83,24 @@ class DumpEngine:
                 if resume_at > start:
                     logger.info("resume", "checkpoint_verified", offset=resume_at, details={"chunks": len(checkpoint.get("chunks", []))})
             except Exception as exc:
-                logger.error("resume", "checkpoint_rejected", details={"error": str(exc)})
-                reader.close()
-                return self._finish(output_dir, logger, manifest, DumpStatus.INVALID_STRUCTURE,
-                                    f"resume refused without overwriting existing evidence: {exc}")
+                # An explicit resume must never overwrite existing evidence; refuse.
+                # A fresh dump into a folder with a mismatched/stale checkpoint should start
+                # clean, unless a finalized firmware_raw.bin is present (never clobber a
+                # completed artifact).
+                if resume:
+                    logger.error("resume", "checkpoint_rejected", details={"error": str(exc)})
+                    reader.close()
+                    return self._finish(output_dir, logger, manifest, DumpStatus.INVALID_STRUCTURE,
+                                        f"resume refused without overwriting existing evidence: {exc}")
+                if (output_dir / "firmware_raw.bin").exists():
+                    logger.error("resume", "checkpoint_rejected_final_present", details={"error": str(exc)})
+                    reader.close()
+                    return self._finish(output_dir, logger, manifest, DumpStatus.INVALID_STRUCTURE,
+                                        "output folder already contains a finalized firmware_raw.bin; "
+                                        "choose a new output folder to avoid overwriting it")
+                logger.warning("resume", "stale_checkpoint_ignored_fresh_dump",
+                               details={"error": str(exc), "action": "starting a fresh dump"})
+                resume_at = start
         hasher = hashlib.sha256()
         written = 0
         try:
