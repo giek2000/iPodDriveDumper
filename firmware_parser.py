@@ -75,9 +75,10 @@ def parse_candidate(reader: Any, geometry: RawGeometry, marker_offset: int, mark
         if not checks["header_signature"]:
             reasons.append("missing ]ih[ header signature")
         version = _u16(header, 0x10A)
+        # iPod Video 5G/5.5G carry a version here; iPod Mini's ]ih[ header is zero past +0x0C.
+        # A zero/implausible version is informational and must not reject a device whose
+        # !ATA directory and OSOS validate. It is not added to rejection reasons.
         checks["plausible_version"] = 0 < version < 0x10000
-        if not checks["plausible_version"]:
-            reasons.append("implausible header version")
         directory_relative = _u32(header, 0x104)
         directory_offset = marker_offset + directory_relative + 0x200
         checks["directory_in_bounds"] = 0 <= directory_offset < geometry.disk_length and directory_offset + 40 <= geometry.disk_length
@@ -123,9 +124,12 @@ def parse_candidate(reader: Any, geometry: RawGeometry, marker_offset: int, mark
         if osos and osos.bounds_status == "IN_BOUNDS" and osos.declared_length >= 4:
             first = reader.read_at(osos.absolute_start, 4)
             osos_first_word = int.from_bytes(first, "little")
-            checks["osos_first_word"] = osos_first_word == 0xEA00007A
+            # PortalPlayer OSOS begins with an ARM `B` (branch) instruction (top byte 0xEA).
+            # iPod Video uses 0xEA00007A; iPod Mini uses a different branch offset (e.g. 0xEA000079).
+            # Accept any ARM branch and record the exact word, instead of a single hard constant.
+            checks["osos_first_word"] = (osos_first_word >> 24) == 0xEA
             if not checks["osos_first_word"]:
-                reasons.append("OSOS first word is not 0xEA00007A")
+                reasons.append(f"OSOS first word 0x{osos_first_word:08X} is not an ARM branch (0xEA......)")
             if osos.declared_length > 0x17AC:
                 anchor = reader.read_at(osos.absolute_start + 0x17A4, 8)
                 retail_os_found = b"retailOS" in anchor

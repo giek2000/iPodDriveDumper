@@ -375,7 +375,7 @@ class DumperWindow(QMainWindow):
         except Exception:
             marker_text = layout.marker.hex()
         is_classic = layout.marker == b"8702"
-        family = "iPod Classic (S5L8702)" if is_classic else "iPod Video (PortalPlayer)"
+        family = layout.family
         first_line = (
             f"Device: {family}    Marker: {_hex(layout.marker_offset)} ({marker_text})    "
             f"Body: {_hex(layout.firmware_body_offset)}"

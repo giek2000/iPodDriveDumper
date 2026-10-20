@@ -7,6 +7,7 @@ This package is a read-only forensic reader for iPod Video 5G/5.5G disks. It is 
 Supported for raw disk-mode firmware dumping:
 
 - **iPod Video 5G/5.5G** (PortalPlayer PP5022/PP5022C) — `{{~~` / `]ih[` / `!ATA` firmware layout. This model exposes its firmware partition as readable sectors over USB disk mode.
+- **iPod Mini** (PortalPlayer PP5020/PP5022) — same `{{~~` / `]ih[` / `!ATA` PortalPlayer layout, confirmed on a live iPod Mini 2G. The Mini's `]ih[` header version field is zero and its OSOS begins with a different ARM branch (`0xEA000079`) than the Video; the validator accepts any ARM-branch OSOS first word and treats a zero header version as informational, so the Mini validates and dumps.
 
 Recognized but not raw-dumpable over disk mode:
 

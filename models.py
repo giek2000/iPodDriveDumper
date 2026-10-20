@@ -124,6 +124,17 @@ class FirmwareLayout:
         """Whether the layout may produce a COMPLETE default dump."""
         return self.valid and not self.boundary_ambiguous and not any(p.contradiction for p in self.partitions)
 
+    @property
+    def family(self) -> str:
+        """Best-effort device family from observed structure traits."""
+        if self.marker == b"8702":
+            return "iPod Classic (S5L8702)"
+        # PortalPlayer family: iPod Video 5G/5.5G carries a non-zero ]ih[ version;
+        # iPod Mini's ]ih[ header is zero past +0x0C.
+        if 0 < self.version < 0x10000:
+            return "iPod Video 5G/5.5G (PortalPlayer PP5022)"
+        return "iPod Mini (PortalPlayer PP5020/PP5022)"
+
     def fingerprint(self) -> dict[str, Any]:
         import hashlib
 
@@ -163,7 +174,7 @@ class FirmwareLayout:
             "validation_score": self.validation_score,
             "validation_checks": self.validation_checks,
             "rejection_reasons": self.rejection_reasons,
-            "device_family": "iPod Classic (S5L8702)" if self.marker == b"8702" else "iPod Video (PortalPlayer)",
+            "device_family": self.family,
             "complete_safe": self.complete_safe,
             "fingerprint": self.fingerprint(),
         }
