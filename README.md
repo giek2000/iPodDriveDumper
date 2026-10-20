@@ -8,6 +8,7 @@ A read-only tool that makes a safe backup copy of an iPod's firmware. It **never
 
 | iPod model | Firmware dump over USB disk mode? | Notes |
 |---|---|---|
+| **iPod 3G** | ✅ Yes — tested on real hardware | PortalPlayer PP5002; same firmware layout, OSOS enters with `MOV PC, R0` |
 | **iPod Video 5G / 5.5G** | ✅ Yes — tested on real hardware | Full firmware dump + named sub-image extraction |
 | **iPod Mini 2G** | ✅ Yes — tested on real hardware | PP5020 generation; full firmware dump + named sub-image extraction |
 | **iPod 4G / Photo (Color)** | ✅ Yes — tested on real hardware | Same PP5020 firmware layout as the Mini; full firmware dump + named sub-image extraction |
@@ -24,8 +25,9 @@ What a successful dump gives you:
 
 ### Verified on real hardware
 
-Each of these was dumped end to end over USB disk mode, and the raw image plus every extracted `!ATA` sub-image was re-checked against the recorded SHA-256 hashes:
+Each of these was validated (and, where noted, dumped) over USB disk mode, with the raw image plus every extracted `!ATA` sub-image re-checked against the recorded SHA-256 hashes:
 
+- **iPod 3G** (PP5002) — validated on a live device; OSOS entry `MOV PC, R0` (`0xE1A0F000`), build `PP5002DF-04.11-...` / `Tango(tm) Digital Media Platform`, `soso` and `dpua` in bounds.
 - **iPod Video 5G/5.5G** — firmware partition captured and verified (2048-byte sector layout).
 - **iPod Mini 2G** (PP5020) — `soso` (OS) and `dpua` (updater) extracted and verified.
 - **iPod 4G / Photo (Color)** (PP5020) — full firmware partition (41,126,400 bytes) captured COMPLETE with `soso` and `dpua` extracted; raw image and both sub-images re-verified byte-for-byte against their hashes.
@@ -51,6 +53,7 @@ If anything looks wrong, nothing has been changed on the iPod — the tool only 
 
 Supported for raw disk-mode firmware dumping:
 
+- **iPod 3G** (PortalPlayer PP5002) — same `{{~~` / `]ih[` / `!ATA` PortalPlayer layout, confirmed on a live iPod 3G (primary firmware at `0x7E00` with a mirror image later on the partition). Its OSOS does not begin with an ARM `B` branch like the later models; it enters with `MOV PC, R0` (`0xE1A0F000`). The validator accepts this entry instruction, so the 3G validates and dumps.
 - **iPod Video 5G/5.5G** (PortalPlayer PP5022/PP5022C) — `{{~~` / `]ih[` / `!ATA` firmware layout. This model exposes its firmware partition as readable sectors over USB disk mode.
 - **iPod Mini / 4G / Photo (Color)** (PortalPlayer PP5020) — same `{{~~` / `]ih[` / `!ATA` PortalPlayer layout, confirmed on a live iPod Mini 2G and a live iPod 4G Color. Their OSOS begins with the ARM branch `0xEA000079` (not the Video's `0xEA00007A`); the validator accepts any ARM-branch OSOS first word, so they validate and dump. These PP5020 models are not reliably distinguishable from one another over disk mode — all three carry the same `portalplayer` string and the same `PP5020AF-05.00-...` boot build string — so the tool reports the shared family name rather than claiming a specific model. Both a Mini 2G and a 4G Color have been dumped end to end and the raw image plus every extracted `!ATA` sub-image re-verified against the recorded SHA-256 hashes; the OSOS image size differs between them (the 4G Color's `soso` is larger than the Mini's), which is expected since the firmware build differs even though the family fingerprint is identical.
 

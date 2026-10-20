@@ -185,8 +185,8 @@ class DumperWindow(QMainWindow):
 
         self.welcome_label = QLabel(
             "<b>Work in progress.</b> This is a read-only tool: it never writes to, restores, or flashes your iPod. "
-            "<b>Working today:</b> full firmware dumps of iPod Video 5G/5.5G and the PP5020 generation "
-            "(iPod Mini, 4G, and Photo/Color) in disk mode, with named sub-image extraction. "
+            "<b>Working today:</b> full firmware dumps of iPod 3G, iPod Video 5G/5.5G, and the PP5020 "
+            "generation (iPod Mini, 4G, and Photo/Color) in disk mode, with named sub-image extraction. "
             "iPod Classic is detected but its firmware cannot be dumped over "
             "disk mode (it shows only its data partition). Nano and Shuffle are not supported. "
             "<b>Steps:</b> 1) Put the iPod in disk mode and connect it. 2) Click Refresh and pick it from the iPod list. "

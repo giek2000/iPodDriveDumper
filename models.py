@@ -158,6 +158,11 @@ class FirmwareLayout:
             return "iPod Video 5G/5.5G (PortalPlayer PP5022)"
         if b"portalplayer" in self.osos_signature and self.osos_first_word == 0xEA000079:
             return "iPod Mini / 4G / Photo (PortalPlayer PP5020)"
+        # iPod 3G (PortalPlayer PP5002): same {{~~/]ih[/!ATA layout, but its OSOS
+        # enters with `MOV PC, R0` (0xE1A0F000) rather than an ARM `B` branch.
+        # Confirmed on a live iPod 3G at marker 0x7E00 with a mirror image later.
+        if self.osos_first_word == 0xE1A0F000:
+            return "iPod 3G (PortalPlayer PP5002)"
         return "iPod (PortalPlayer)"
 
     def fingerprint(self) -> dict[str, Any]:

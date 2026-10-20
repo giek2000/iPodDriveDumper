@@ -173,6 +173,54 @@ def build_mini_fixture(*, osos_length: int = 0x8000) -> SyntheticFixture:
                             body_offset + osos_device_offset, osos_length)
 
 
+def build_3g_fixture(*, osos_length: int = 0x8000) -> SyntheticFixture:
+    """Synthetic iPod 3G (PortalPlayer PP5002) 512-byte layout grounded in a live 3G.
+
+    Same {{~~ / ]ih[ / !ATA PortalPlayer layout as the PP5020 generation, with one
+    verified difference confirmed on a real iPod 3G: the OSOS does not begin with an
+    ARM `B` branch. Its first word is 0xE1A0F000 (`MOV PC, R0`). This is why the
+    validator must accept a `MOV PC` entry, not only a 0xEA branch.
+    """
+    sector_size = 512
+    marker_offset = 0x7E00
+    body_offset = marker_offset + sector_size           # 0x8000
+    directory_relative = 0x4000
+    directory_offset = marker_offset + directory_relative + 0x200  # 0xC000
+    osos_device_offset = 0x4400
+    sections = [(b"soso", osos_device_offset, osos_length),
+                (b"dpua", osos_device_offset + osos_length, 0x2000)]
+    last_end = max(body_offset + off + length for _, off, length in sections)
+    disk_length = ((last_end + 0x20000 + 0x1FF) // 0x200) * 0x200
+    image = bytearray(disk_length)
+    header = bytearray(0x200)
+    header[0:4] = b"{{~~"
+    header[0x100:0x104] = b"]ih["
+    struct.pack_into("<I", header, 0x104, directory_relative)
+    image[marker_offset:marker_offset + len(header)] = header
+    directory = bytearray(0x4000)
+    for index, (name, device_offset, length) in enumerate(sections):
+        directory[index * 40:(index + 1) * 40] = _record(name, device_offset, length, 0x10000000, 0)
+    image[directory_offset:directory_offset + len(directory)] = directory
+    for name, device_offset, length in sections:
+        absolute = body_offset + device_offset
+        content = bytearray(_pattern(length, name + b"3g"))
+        if name == b"soso":
+            content[:4] = b"\x00\xF0\xA0\xE1"      # ARM `MOV PC, R0`, little-endian 0xE1A0F000
+        image[absolute:absolute + length] = content
+    image[510:512] = b"\x55\xAA"
+    entry = bytearray(16)
+    entry[4] = 0x00
+    struct.pack_into("<I", entry, 8, 0)
+    struct.pack_into("<I", entry, 12, (body_offset + sections[-1][1] + sections[-1][2]) // 512)
+    image[446:462] = entry
+    geometry = RawGeometry(
+        disk_length=disk_length, logical_sector_size=sector_size,
+        physical_sector_size=sector_size, alignment=sector_size, removable=True,
+    )
+    return SyntheticFixture(bytes(image), geometry, marker_offset, b"{{~~",
+                            body_offset + osos_device_offset, osos_length)
+
+
 def build_s5l8702_fixture(*, marker_offset: int = 0x1F800, body_length: int = 0x500000) -> SyntheticFixture:
     """Synthetic iPod Classic (S5L8702) IMG1/"8702" container on a 2048-byte disk."""
     sector_size = 2048

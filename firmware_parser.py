@@ -22,6 +22,23 @@ def _u32(data: bytes, offset: int) -> int:
     return struct.unpack_from("<I", data, offset)[0]
 
 
+def _is_osos_entry(word: int) -> bool:
+    """True if `word` is an ARM instruction that a PortalPlayer OSOS uses as its entry.
+
+    Grounded in live devices:
+      - ARM `B` (branch): top byte 0xEA. iPod Video (0xEA00007A) and the PP5020
+        generation / Mini, 4G, Photo (0xEA000079).
+      - ARM `MOV PC, Rn` (0xE1A0F0_n): iPod 3G (PP5002) begins with 0xEA? no — it
+        uses 0xE1A0F000, `MOV PC, R0`. The fixed bits are 0xE1A0F0 with the low
+        nibble selecting the source register.
+    """
+    if (word >> 24) == 0xEA:
+        return True
+    if (word & 0xFFFFFFF0) == 0xE1A0F000:
+        return True
+    return False
+
+
 def _u16(data: bytes, offset: int) -> int:
     return struct.unpack_from("<H", data, offset)[0]
 
@@ -127,12 +144,16 @@ def parse_candidate(reader: Any, geometry: RawGeometry, marker_offset: int, mark
             osos_signature = reader.read_at(osos.absolute_start, sig_len)
             first = osos_signature[:4]
             osos_first_word = int.from_bytes(first, "little")
-            # PortalPlayer OSOS begins with an ARM `B` (branch) instruction (top byte 0xEA).
-            # iPod Video uses 0xEA00007A; iPod Mini uses a different branch offset (e.g. 0xEA000079).
-            # Accept any ARM branch and record the exact word, instead of a single hard constant.
-            checks["osos_first_word"] = (osos_first_word >> 24) == 0xEA
+            # The PortalPlayer OSOS starts with an ARM instruction that transfers control
+            # into the image. Observed across live devices:
+            #   - iPod Video 5G/5.5G : 0xEA00007A  (ARM `B` branch)
+            #   - iPod Mini / 4G / Photo (PP5020): 0xEA000079  (ARM `B` branch)
+            #   - iPod 3G (PP5002)   : 0xE1A0F000  (ARM `MOV PC, R0`)
+            # Accept any such valid entry and record the exact word, rather than a single
+            # hard constant or only the `B`-branch form.
+            checks["osos_first_word"] = _is_osos_entry(osos_first_word)
             if not checks["osos_first_word"]:
-                reasons.append(f"OSOS first word 0x{osos_first_word:08X} is not an ARM branch (0xEA......)")
+                reasons.append(f"OSOS first word 0x{osos_first_word:08X} is not a recognized ARM entry instruction")
             if osos.declared_length > 0x17AC:
                 anchor = reader.read_at(osos.absolute_start + 0x17A4, 8)
                 retail_os_found = b"retailOS" in anchor
