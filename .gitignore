@@ -9,6 +9,8 @@ __pycache__/
 build/
 dist/
 *.spec.bak
+# The compiled EXE is distributed only as a GitHub Release asset, never tracked in the repo
+*.exe
 
 # Compiled icon generated from dumper.png at build time
 dumper.ico

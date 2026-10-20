@@ -17,6 +17,10 @@ Other iPod families (Nano, Mini, Shuffle) are not supported.
 
 Read-only diagnostic commands (`probe`, `hexdump`) are provided to inspect a device's real on-disk bytes before any dump.
 
+## Download
+
+The compiled `IpodRawDriveDumper_vx.y.z.exe` is published **only as a GitHub Release asset** — it is intentionally not committed to the repository. Grab the latest build from the [Releases page](https://github.com/giek2000/iPodDriveDumper/releases). To build the EXE yourself from source, see [Build](#build).
+
 ### Full-partition dump and sub-image extraction
 
 For a complete firmware-partition image (useful for preserving beta firmware and for later IPSW recreation), use full-partition mode:
