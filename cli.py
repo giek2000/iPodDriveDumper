@@ -78,7 +78,12 @@ def _select(args):
 def _inspect(args):
     reader, layout = _select(args)
     try:
-        print(json.dumps(layout.to_dict(), indent=2, sort_keys=True))
+        text = json.dumps(layout.to_dict(), indent=2, sort_keys=True)
+        if getattr(args, "out", None):
+            Path(args.out).write_text(text + "\n", encoding="utf-8")
+            print(f"inspect written to {args.out}")
+        else:
+            print(text)
     finally:
         reader.close()
     return 0
@@ -229,6 +234,7 @@ def build_parser() -> argparse.ArgumentParser:
     inspect = sub.add_parser("inspect", help="inspect one validated device")
     inspect.add_argument("--drive")
     inspect.add_argument("--json", action="store_true")
+    inspect.add_argument("--out", help="write inspect output to this file (reliable for windowed EXE)")
     _fixture_args(inspect)
     dump = sub.add_parser("dump", help="read a validated raw range")
     dump.add_argument("--drive")
