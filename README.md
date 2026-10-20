@@ -10,7 +10,7 @@ A read-only tool that makes a safe backup copy of an iPod's firmware. It **never
 |---|---|---|
 | **iPod 3G** | ✅ Yes — dumped and IPSW-verified | PortalPlayer PP5002; same firmware layout, OSOS enters with `MOV PC, R0`; dump cross-checked against `iPod_2.2.3.ipsw` |
 | **iPod Video 5G / 5.5G** | ✅ Yes — tested on real hardware | Full firmware dump + named sub-image extraction |
-| **iPod Mini 2G** | ✅ Yes — tested on real hardware | PP5020 generation; full firmware dump + named sub-image extraction |
+| **iPod Mini 2G** | ✅ Yes — dumped and IPSW-verified | PP5020 generation; dump cross-checked against `iPod_7.1.4.1.ipsw` |
 | **iPod 4G / Photo (Color)** | ✅ Yes — dumped and IPSW-verified | Same PP5020 firmware layout as the Mini; dump cross-checked against `iPod_11.1.2.1.ipsw` |
 | **iPod Classic 6G/6.5G/7G** | ❌ No | Detected and identified, but the Classic only exposes its data partition over disk mode — firmware is not readable this way (needs DFU/wInd3x) |
 | iPod Nano / Shuffle | ❌ Not supported | — |
@@ -29,7 +29,7 @@ Each of these was dumped over USB disk mode, with the raw image plus every extra
 
 - **iPod 3G** (PP5002) — dumped COMPLETE; OSOS entry `MOV PC, R0` (`0xE1A0F000`), build `PP5002DF-04.11-...` / `Tango(tm) Digital Media Platform`. **Cross-checked against `iPod_2.2.3.ipsw`:** the `dpua` updater is byte-for-byte identical, and the `soso` OS is bit-identical for its first 3,432,960 bytes (~99%), so the dump is confirmed to be the same firmware build.
 - **iPod Video 5G/5.5G** — firmware partition captured and verified (2048-byte sector layout).
-- **iPod Mini 2G** (PP5020) — `soso` (OS) and `dpua` (updater) extracted and verified.
+- **iPod Mini 2G** (PP5020) — dumped with `soso` (OS) and `dpua` (updater) extracted and verified; build `PP5020AF-05.00-...` / `2003.10.30 (Build 04)`. **Cross-checked against `iPod_7.1.4.1.ipsw`:** the `dpua` updater is byte-for-byte identical and the OSOS carries the same build string, with the first 998,400 bytes (~975 KB) of `soso` bit-identical to the IPSW. Beyond that the on-device OSOS diverges more than the 3G/4G do (the device copy holds runtime/filler where the IPSW keeps packed code), but the identical updater plus matching build string and shared OSOS prefix confirm it is the same firmware build.
 - **iPod 4G / Photo (Color)** (PP5020) — full firmware partition (41,126,400 bytes) captured COMPLETE with `soso` and `dpua` extracted; raw image and both sub-images re-verified byte-for-byte against their hashes. **Cross-checked against `iPod_11.1.2.1.ipsw`:** the `dpua` updater is byte-for-byte identical and the `soso` OS is bit-identical for its first 5,387,776 bytes (~99%), confirming the same firmware build.
 
 About the IPSW cross-check: the on-device OS is the *installed* copy, so the last ~1% of the OSOS image differs from the clean, packed OSOS inside an IPSW (flashed/runtime state vs. factory package). The updater (`dpua`) and the entire packed OSOS code region match exactly, which is what authenticates the dump as a genuine capture of that firmware build. This is a verification aid only — the tool still cannot rebuild a flashable IPSW.
