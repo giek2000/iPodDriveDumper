@@ -466,10 +466,27 @@ class DumperWindow(QMainWindow):
             QMessageBox.warning(self, "Unsafe layout", "This layout is not eligible for a complete dump.")
             return
         output = Path(output_text)
+        # Avoid the engine's "won't overwrite a finalized image" refusal: if this folder
+        # already holds a completed dump, offer to write into a fresh timestamped subfolder.
+        if (output / "firmware_raw.bin").exists():
+            from datetime import datetime, timezone
+            suggested = output / f"dump_{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}"
+            choice = QMessageBox.question(
+                self, "Output folder already used",
+                f"{output} already contains a completed dump (firmware_raw.bin).\n\n"
+                f"Create a new subfolder and dump there instead?\n{suggested}\n\n"
+                "Choosing No cancels so you can pick another folder.",
+                QMessageBox.Yes | QMessageBox.No)
+            if choice != QMessageBox.Yes:
+                return
+            output = suggested
+            self.output_edit.setText(str(output))
         full_partition = self.full_partition_checkbox.isChecked()
         if full_partition and layout.firmware_partition_end:
-            end_label = _hex(max(layout.firmware_partition_end, layout.section_end))
-            range_label = f"0x00000000–{end_label} (full firmware partition)"
+            fp_end = max(layout.firmware_partition_end, layout.section_end)
+            range_label = f"0x00000000–{_hex(fp_end)} (full firmware partition)"
+            if fp_end == layout.requested_end:
+                range_label += "  — same as the default range on this device"
         else:
             range_label = f"0x00000000–{_hex(layout.requested_end)}"
         confirmation = (
